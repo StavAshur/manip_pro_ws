@@ -1053,6 +1053,26 @@ void SolverUsingCRAndGeometry::forward_solver_using_chain_rule(Manipulator *mani
   }
 }
 
+
+///@todo to be implemented later if plan is approved
+// bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
+// {
+
+//   pose {(x,y,z), v}
+
+//   get beam range l
+//   get beam angle alpha
+
+//   compute MES(P) b=(c,r)
+
+//   compute segment s=[c+(r-l)*v. min(c-r*v, r/tan(alpha/2))]
+
+//   binary search over s to find closest valid point to c 
+
+// }
+
+
+
 bool SolverUsingCRAndGeometry::inverse_solver_using_geometry(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   Manipulator _manipulator = *manipulator;
