@@ -299,7 +299,8 @@
     <visual>
       <origin xyz="0 0 0.05" rpy="0 0 0"/> <!-- Cylinder center -->
       <geometry>
-        <cylinder radius="0.02" length="0.1"/>
+        <!-- <cylinder radius="0.02" length="0.1"/> -->
+          <mesh filename="package://open_manipulator_p_description/meshes/cylinder.stl" scale="0.01 0.01 0.01"/>
       </geometry>
       <material name="blue"/>
     </visual>
@@ -307,7 +308,8 @@
     <collision>
       <origin xyz="0 0 0.05" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.02" length="0.1"/>
+        <!-- <cylinder radius="0.02" length="0.1"/> -->
+        <mesh filename="package://open_manipulator_p_description/meshes/cylinder.stl" scale="0.01 0.01 0.01"/>
       </geometry>
     </collision>
   </link>
@@ -317,7 +319,8 @@
   <joint name="flashlight_joint" type="fixed">
     <parent link="end_link"/> <!-- Replace with your robot’s last link if different -->
     <child link="flashlight_link"/>
-    <origin xyz="0.0 0.0 0.0" rpy="0 1.57 0"/>
+    <!-- <origin xyz="0.0 0.0 0.0" rpy="0 1.57 0"/> -->
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
   </joint>
 
   <link name="lightbeam_link">
@@ -325,8 +328,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/> <!-- cone starts after cylinder -->
       <geometry>
-        <mesh filename="package://open_manipulator_p_description/meshes/cone.stl" scale="0.01 0.01 0.01"/>
-        <!-- <cylinder radius="0.2" length="1.0"/> -->
+        <mesh filename="package://open_manipulator_p_description/meshes/new_cone.stl" scale="0.01 0.01 0.01"/>
       </geometry>
       <material name="light_beam"/>
     </visual>
@@ -345,7 +347,7 @@
   <joint name="lightbeam_joint" type="fixed">
     <parent link="flashlight_link"/> <!-- Replace with your robot’s last link if different -->
     <child link="lightbeam_link"/>
-    <origin xyz="0.0 0.0 1.1" rpy="3.1415 0 0"/>
+    <origin xyz="0.0 0.0 0.1" rpy="0 0 0"/>
   </joint>
 
 
