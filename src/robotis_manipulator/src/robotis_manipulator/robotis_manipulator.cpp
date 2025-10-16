@@ -1179,6 +1179,18 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, KinematicPose goal_p
   startMoving();
 }
 
+void RobotisManipulator::makeTaskTrajectory(Name tool_name, std::vector<Eigen::Vector3d> target, double move_time, std::vector<JointValue> present_joint_value)
+{
+  log::println("========================");
+  log::println("========================");
+  log::println("========================");
+  log::println("Recieved a visual target");
+  log::println("========================");
+  log::println("========================");
+  log::println("========================");
+
+}
+
 void RobotisManipulator::setCustomTrajectoryOption(Name trajectory_name, const void* arg)
 {
   trajectory_.setCustomTrajectoryOption(trajectory_name, arg);

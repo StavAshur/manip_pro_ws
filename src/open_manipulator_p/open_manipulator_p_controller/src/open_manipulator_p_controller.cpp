@@ -141,6 +141,8 @@ void OpenManipulatorPController::init_server()
     "goal_task_space_path_position_only", std::bind(&OpenManipulatorPController::goal_task_space_path_position_only_callback, this, _1, _2));
   goal_task_space_path_orientation_only_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
     "goal_task_space_path_orientation_only", std::bind(&OpenManipulatorPController::goal_task_space_path_orientation_only_callback, this, _1, _2));
+  goal_task_space_path_visual_target_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
+    "goal_task_space_visual_target", std::bind(&OpenManipulatorPController::goal_task_space_path_visual_target_callback, this, _1, _2));
   goal_joint_space_path_from_present_server_ = this->create_service<open_manipulator_msgs::srv::SetJointPosition>(
     "goal_joint_space_path_from_present", std::bind(&OpenManipulatorPController::goal_joint_space_path_from_present_callback, this, _1, _2));
   goal_task_space_path_from_present_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
@@ -288,6 +290,20 @@ void OpenManipulatorPController::goal_task_space_path_orientation_only_callback(
   Eigen::Matrix3d orientation = math::convertQuaternionToRotationMatrix(q);
 
   open_manipulator_p_.makeTaskTrajectory(req->end_effector_name, orientation, req->path_time);
+
+  res->is_planned = true;
+  return;
+}
+
+void OpenManipulatorPController::goal_task_space_path_visual_target_callback(
+  const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Request> req,
+  const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Response> res)
+{
+
+  std::vector<Eigen::Vector3d> target;
+  target.push_back(Eigen::Vector3d(1.0,1.0,1.0));
+
+  open_manipulator_p_.makeTaskTrajectory(req->end_effector_name, target, req->path_time);
 
   res->is_planned = true;
   return;
