@@ -57,6 +57,7 @@ class OpenManipulatorPController : public rclcpp::Node
   bool sim_;
   double control_period_;
   bool with_gripper_;
+  bool with_flashlight_;
 
   /*****************************************************************************
   ** Variables

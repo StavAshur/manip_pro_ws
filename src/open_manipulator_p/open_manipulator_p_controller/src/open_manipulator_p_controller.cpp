@@ -34,7 +34,7 @@ OpenManipulatorPController::OpenManipulatorPController(std::string usb_port, std
   /************************************************************
   ** Initialise variables
   ************************************************************/
-  open_manipulator_p_.init_open_manipulator_p(sim_, usb_port, baud_rate, control_period_, with_gripper_);
+  open_manipulator_p_.init_open_manipulator_p(sim_, usb_port, baud_rate, control_period_, with_gripper_, with_flashlight_);
 
   if (sim_ == false) RCLCPP_INFO(this->get_logger(), "Succeeded to Initialise OpenMANIPULATOR-P Controller");
   else RCLCPP_INFO(this->get_logger(), "Ready to Simulate OpenMANIPULATOR-P on RViz");
@@ -68,11 +68,13 @@ void OpenManipulatorPController::init_parameters()
   this->declare_parameter("sim");
   this->declare_parameter("control_period");
   this->declare_parameter("with_gripper");
+  this->declare_parameter("with_flashlight");
 
   // Get parameter from yaml
   this->get_parameter_or<bool>("sim", sim_, false);
   this->get_parameter_or<double>("control_period", control_period_, 0.010);
   this->get_parameter_or<bool>("with_gripper", with_gripper_, false);
+  this->get_parameter_or<bool>("with_flashlight", with_flashlight_, false);
 }
 
 void OpenManipulatorPController::init_publisher()
@@ -458,7 +460,7 @@ void OpenManipulatorPController::process_callback()
 
 void OpenManipulatorPController::process(double time)
 {
-  open_manipulator_p_.process_open_manipulator_p(time, sim_, with_gripper_);
+  open_manipulator_p_.process_open_manipulator_p(time, sim_, with_gripper_, with_flashlight_);
 }
 
 /********************************************************************************
