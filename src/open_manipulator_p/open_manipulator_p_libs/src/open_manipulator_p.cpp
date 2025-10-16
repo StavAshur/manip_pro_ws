@@ -29,7 +29,7 @@ OpenManipulatorP::~OpenManipulatorP()
     delete custom_trajectory_[index];
 }
 
-void OpenManipulatorP::init_open_manipulator_p(bool sim, STRING usb_port, STRING baud_rate, float control_loop_time, bool with_gripper, std::vector<uint8_t> dxl_id)
+void OpenManipulatorP::init_open_manipulator_p(bool sim, STRING usb_port, STRING baud_rate, float control_loop_time, bool with_gripper, bool with_flashlight, std::vector<uint8_t> dxl_id)
 {
   /*****************************************************************************
   ** Initialize Manipulator Parameter
@@ -172,7 +172,9 @@ void OpenManipulatorP::init_open_manipulator_p(bool sim, STRING usb_port, STRING
 
   // Set kinematics arguments
   void *p_with_gripper = &with_gripper;
-  setKinematicsOption(p_with_gripper);
+  setKinematicsOption("with_gripper", p_with_gripper);
+  void *p_with_flashlight = &with_flashlight;
+  setKinematicsOption("with_flashlight", p_with_flashlight);
 
   if (!sim)
   {
@@ -251,7 +253,7 @@ void OpenManipulatorP::init_open_manipulator_p(bool sim, STRING usb_port, STRING
   addCustomTrajectory(CUSTOM_TRAJECTORY_HEART, custom_trajectory_[3]);
 }
 
-void OpenManipulatorP::process_open_manipulator_p(double present_time, bool sim, bool with_gripper)
+void OpenManipulatorP::process_open_manipulator_p(double present_time, bool sim, bool with_gripper, bool with_flashlight)
 {
   // Planning (ik)
   JointWaypoint goal_joint_value = getJointGoalValueFromTrajectory(present_time);

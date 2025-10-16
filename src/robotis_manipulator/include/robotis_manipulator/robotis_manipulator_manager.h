@@ -36,10 +36,11 @@ public:
   Kinematics() {}
   virtual ~Kinematics() {}
 
-  virtual void setOption(const void *arg) = 0;
+  virtual void setOption(std::string var_name, const void *arg) = 0;
   virtual Eigen::MatrixXd jacobian(Manipulator *manipulator, Name tool_name) = 0;
   virtual void solveForwardKinematics(Manipulator *manipulator) = 0;
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_position) = 0;
+  virtual bool solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value) = 0;
 };
 
 class JointActuator

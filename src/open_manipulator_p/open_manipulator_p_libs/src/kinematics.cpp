@@ -24,7 +24,7 @@ using namespace kinematics;
 /*****************************************************************************
 ** Kinematics Solver Using Chain Rule and Jacobian
 *****************************************************************************/
-void SolverUsingCRAndJacobian::setOption(const void *arg){}
+void SolverUsingCRAndJacobian::setOption(std::string var_name, const void *arg){}
 
 Eigen::MatrixXd SolverUsingCRAndJacobian::jacobian(Manipulator *manipulator, Name tool_name)
 {
@@ -79,6 +79,11 @@ void SolverUsingCRAndJacobian::solveForwardKinematics(Manipulator *manipulator)
 bool SolverUsingCRAndJacobian::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   return inverse_solver_using_jacobian(manipulator, tool_name, target_pose, goal_joint_value);
+}
+
+bool SolverUsingCRAndJacobian::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+{
+  throw std::runtime_error("Not implemented");
 }
 
 //private
@@ -177,7 +182,7 @@ bool SolverUsingCRAndJacobian::inverse_solver_using_jacobian(Manipulator *manipu
 /*****************************************************************************
 ** Kinematics Solver Using Chain Rule and Singularity Robust Jacobian
 *****************************************************************************/
-void SolverUsingCRAndSRJacobian::setOption(const void *arg){}
+void SolverUsingCRAndSRJacobian::setOption(std::string var_name, const void *arg){}
 
 Eigen::MatrixXd SolverUsingCRAndSRJacobian::jacobian(Manipulator *manipulator, Name tool_name)
 {
@@ -232,6 +237,11 @@ void SolverUsingCRAndSRJacobian::solveForwardKinematics(Manipulator *manipulator
 bool SolverUsingCRAndSRJacobian::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   return inverse_solver_using_sr_jacobian(manipulator, tool_name, target_pose, goal_joint_value);
+}
+
+bool SolverUsingCRAndSRJacobian::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+{
+  throw std::runtime_error("Not implemented");
 }
 
 //private
@@ -443,7 +453,7 @@ bool SolverUsingCRAndSRJacobian::inverse_solver_using_sr_jacobian(Manipulator *m
 /*****************************************************************************
 ** Kinematics Solver Using Chain Rule and Singularity Robust Position Only Jacobian
 *****************************************************************************/
-void SolverUsingCRAndSRPositionOnlyJacobian::setOption(const void *arg){}
+void SolverUsingCRAndSRPositionOnlyJacobian::setOption(std::string var_name, const void *arg){}
 
 Eigen::MatrixXd SolverUsingCRAndSRPositionOnlyJacobian::jacobian(Manipulator *manipulator, Name tool_name)
 {
@@ -498,6 +508,11 @@ void SolverUsingCRAndSRPositionOnlyJacobian::solveForwardKinematics(Manipulator 
 bool SolverUsingCRAndSRPositionOnlyJacobian::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   return inverse_solver_using_position_only_sr_jacobian(manipulator, tool_name, target_pose, goal_joint_value);
+}
+
+bool SolverUsingCRAndSRPositionOnlyJacobian::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+{
+  throw std::runtime_error("Not implemented");
 }
 
 //private
@@ -709,7 +724,7 @@ bool SolverUsingCRAndSRPositionOnlyJacobian::inverse_solver_using_position_only_
 /*****************************************************************************
 ** Kinematics Solver Customized for OpenManipulator Chain
 *****************************************************************************/
-void SolverCustomizedforOMChain::setOption(const void *arg){}
+void SolverCustomizedforOMChain::setOption(std::string var_name, const void *arg){}
 
 Eigen::MatrixXd SolverCustomizedforOMChain::jacobian(Manipulator *manipulator, Name tool_name)
 {
@@ -764,6 +779,11 @@ void SolverCustomizedforOMChain::solveForwardKinematics(Manipulator *manipulator
 bool SolverCustomizedforOMChain::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   return chain_custom_inverse_kinematics(manipulator, tool_name, target_pose, goal_joint_value);
+}
+
+bool SolverCustomizedforOMChain::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+{
+  throw std::runtime_error("Not implemented");
 }
 
 //private
@@ -989,9 +1009,13 @@ bool SolverCustomizedforOMChain::chain_custom_inverse_kinematics(Manipulator *ma
 /*****************************************************************************
 ** Kinematics Solver Using Geometry Approach
 *****************************************************************************/
-void SolverUsingCRAndGeometry::setOption(const void *arg)
+void SolverUsingCRAndGeometry::setOption(std::string var_name, const void *arg)
 {
-  with_gripper_ = arg;
+  
+  if (var_name == "with_gripper")
+    with_gripper_ = arg;
+  else if (var_name == "with_flashlight")
+    with_flashlight = arg;
 }
 
 Eigen::MatrixXd SolverUsingCRAndGeometry::jacobian(Manipulator *manipulator, Name tool_name)
@@ -1008,6 +1032,11 @@ void SolverUsingCRAndGeometry::solveForwardKinematics(Manipulator *manipulator)
 bool SolverUsingCRAndGeometry::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   return inverse_solver_using_geometry(manipulator, tool_name, target_pose, goal_joint_value);
+}
+
+bool SolverUsingCRAndGeometry::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+{
+  return visual_inverse_solver_using_geometry(manipulator, tool_name, target, goal_joint_value);
 }
 
 //private
@@ -1054,9 +1083,35 @@ void SolverUsingCRAndGeometry::forward_solver_using_chain_rule(Manipulator *mani
 }
 
 
+
+
+
+
 ///@todo to be implemented later if plan is approved
-// bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
-// {
+bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
+  Manipulator *manipulator,
+  Name tool_name,
+  std::vector<Eigen::Vector3d> *target,
+  std::vector<JointValue> *goal_joint_value)
+{
+
+  Eigen::Vector3d v(1,2,3);
+
+  if (with_flashlight){
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+    log::println("--------I HAVE A FLASHLIGHT---------");
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+    log::println("------------------------------------");
+  }
 
 //   pose {(x,y,z), v}
 
@@ -1068,8 +1123,8 @@ void SolverUsingCRAndGeometry::forward_solver_using_chain_rule(Manipulator *mani
 //   compute segment s=[c+(r-l)*v. min(c-r*v, r/tan(alpha/2))]
 
 //   binary search over s to find closest valid point to c 
-
-// }
+  return true;
+}
 
 
 

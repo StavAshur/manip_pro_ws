@@ -215,9 +215,14 @@ bool RobotisManipulator::solveInverseKinematics(Name tool_name, Pose goal_pose, 
   return kinematics_->solveInverseKinematics(&manipulator_, tool_name, goal_pose, goal_joint_value);
 }
 
-void RobotisManipulator::setKinematicsOption(const void* arg)
+bool RobotisManipulator::solveVisualInverseKinematics(Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
 {
-  kinematics_->setOption(arg);
+  return kinematics_->solveVisualInverseKinematics(&manipulator_, tool_name, target, goal_joint_value);
+}
+
+void RobotisManipulator::setKinematicsOption(std::string var_name, const void* arg)
+{
+  kinematics_->setOption(var_name, arg);
 }
 
 
@@ -1034,6 +1039,8 @@ void RobotisManipulator::makeJointTrajectory(Name tool_name, KinematicPose goal_
   temp_goal_pose.kinematic = goal_pose;
   temp_goal_pose = trajectory_.removeWaypointDynamicData(temp_goal_pose);
   std::vector<JointValue> goal_joint_angle;
+
+
   if(kinematics_->solveInverseKinematics(trajectory_.getManipulator(), tool_name, temp_goal_pose, &goal_joint_angle))
   {
     if(getMovingState())
@@ -1050,6 +1057,7 @@ void RobotisManipulator::makeJointTrajectory(Name tool_name, KinematicPose goal_
 
 void RobotisManipulator::makeTaskTrajectoryFromPresentPose(Name tool_name, Eigen::Vector3d position_meter, double move_time, std::vector<JointValue> present_joint_value)
 {
+
   if(present_joint_value.size() != 0)
   {
     trajectory_.setPresentJointWaypoint(present_joint_value);
@@ -1080,6 +1088,7 @@ void RobotisManipulator::makeTaskTrajectoryFromPresentPose(Name tool_name, Eigen
 
 void RobotisManipulator::makeTaskTrajectoryFromPresentPose(Name tool_name, KinematicPose goal_pose_delta, double move_time, std::vector<JointValue> present_joint_value)
 {
+
   if(present_joint_value.size() != 0)
   {
     trajectory_.setPresentJointWaypoint(present_joint_value);
@@ -1095,6 +1104,7 @@ void RobotisManipulator::makeTaskTrajectoryFromPresentPose(Name tool_name, Kinem
 
 void RobotisManipulator::makeTaskTrajectory(Name tool_name, Eigen::Vector3d goal_position, double move_time, std::vector<JointValue> present_joint_value)
 {
+
   if(present_joint_value.size() != 0)
   {
     trajectory_.setPresentJointWaypoint(present_joint_value);
@@ -1110,6 +1120,7 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, Eigen::Vector3d goal
 
 void RobotisManipulator::makeTaskTrajectory(Name tool_name, Eigen::Matrix3d goal_orientation, double move_time, std::vector<JointValue> present_joint_value)
 {
+
   if(present_joint_value.size() != 0)
   {
     trajectory_.setPresentJointWaypoint(present_joint_value);
@@ -1125,6 +1136,8 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, Eigen::Matrix3d goal
 
 void RobotisManipulator::makeTaskTrajectory(Name tool_name, KinematicPose goal_pose, double move_time, std::vector<JointValue> present_joint_value)
 {
+
+
   trajectory_.setTrajectoryType(TASK_TRAJECTORY);
   trajectory_.setPresentControlToolName(tool_name);
   trajectory_.setMoveTime(move_time);
@@ -1147,6 +1160,22 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, KinematicPose goal_p
     while(!step_moving_state_) ;
   }
   trajectory_.makeTaskTrajectory(present_task_way_point, goal_task_way_point);
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///@todo: JUST FOR TESTING PURPOSES @author Stav
+    std::vector<Eigen::Vector3d> target;
+    target.push_back(Eigen::Vector3d(1.0, 1.0, 1.0));
+    JointWaypoint present_joint_way_point = trajectory_.getPresentJointWaypoint();
+    kinematics_->solveVisualInverseKinematics(trajectory_.getManipulator(), trajectory_.getPresentControlToolName(), &target, &present_joint_way_point);
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
   startMoving();
 }
 

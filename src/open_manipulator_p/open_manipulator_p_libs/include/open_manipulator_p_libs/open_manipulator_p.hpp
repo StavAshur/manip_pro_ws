@@ -46,10 +46,11 @@ class OpenManipulatorP : public robotis_manipulator::RobotisManipulator
     bool sim, 
     STRING usb_port = "/dev/ttyUSB0", 
     STRING baud_rate = "1000000", 
-    float control_loop_time = 0.010, 
+    float control_loop_time = 0.010,
     bool with_gripper = false,
+    bool with_flashlight = false,
     std::vector<uint8_t> dxl_id = {1, 2, 3, 4, 5, 6, 7});
-  void process_open_manipulator_p(double present_time, bool sim, bool with_gripper = false);
+  void process_open_manipulator_p(double present_time, bool sim, bool with_gripper = false, bool with_flashlight = false);
   JointWaypoint distance_to_angle(JointWaypoint distance);
   JointWaypoint angle_to_distance(JointWaypoint angle);
 

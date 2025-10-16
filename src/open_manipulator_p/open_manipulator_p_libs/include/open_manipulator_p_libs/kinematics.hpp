@@ -45,10 +45,11 @@ class SolverUsingCRAndJacobian : public robotis_manipulator::Kinematics
   SolverUsingCRAndJacobian(){}
   virtual ~SolverUsingCRAndJacobian(){}
 
-  virtual void setOption(const void *arg);
+  virtual void setOption(std::string var_name, const void *arg);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void solveForwardKinematics(Manipulator *manipulator);
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);
+  virtual bool solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value);
 };
 
 /*****************************************************************************
@@ -64,10 +65,12 @@ class SolverUsingCRAndSRJacobian : public robotis_manipulator::Kinematics
   SolverUsingCRAndSRJacobian(){}
   virtual ~SolverUsingCRAndSRJacobian(){}
 
-  virtual void setOption(const void *arg);
+  virtual void setOption(std::string var_name, const void *arg);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void solveForwardKinematics(Manipulator *manipulator);
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);
+  virtual bool solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value);
+
 };
 
 /*****************************************************************************
@@ -83,10 +86,11 @@ public:
   SolverUsingCRAndSRPositionOnlyJacobian(){}
   virtual ~SolverUsingCRAndSRPositionOnlyJacobian(){}
 
-  virtual void setOption(const void *arg);
+  virtual void setOption(std::string var_name, const void *arg);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void solveForwardKinematics(Manipulator *manipulator);
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);
+  virtual bool solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value);
 };
 
 /*****************************************************************************
@@ -102,10 +106,11 @@ public:
   SolverCustomizedforOMChain(){}
   virtual ~SolverCustomizedforOMChain(){}
 
-  virtual void setOption(const void *arg);
+  virtual void setOption(std::string var_name, const void *arg);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void solveForwardKinematics(Manipulator *manipulator);
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);
+  virtual bool solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value);
 };
 
 /*****************************************************************************
@@ -115,18 +120,21 @@ class SolverUsingCRAndGeometry : public robotis_manipulator::Kinematics
 {
 private:
   bool with_gripper_ = false;
+  bool with_flashlight = false;
 
   void forward_solver_using_chain_rule(Manipulator *manipulator, Name component_name);
   bool inverse_solver_using_geometry(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);
+  bool visual_inverse_solver_using_geometry(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value);
 
 public:
   SolverUsingCRAndGeometry(){}
   virtual ~SolverUsingCRAndGeometry(){}
 
-  virtual void setOption(const void *arg);
+  virtual void setOption(std::string var_name, const void *arg);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void solveForwardKinematics(Manipulator *manipulator);
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);
+  virtual bool solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value);
 };
 }  // namespace kinematics
 #endif // KINEMATICS_HPP

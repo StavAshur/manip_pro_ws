@@ -120,7 +120,8 @@ public:
   Eigen::MatrixXd jacobian(Name tool_name);
   void solveForwardKinematics();
   bool solveInverseKinematics(Name tool_name, Pose goal_pose, std::vector<JointValue> *goal_joint_value);
-  void setKinematicsOption(const void* arg);
+  bool solveVisualInverseKinematics(Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value);
+  void setKinematicsOption(std::string var_name, const void* arg);
 
 
   /*****************************************************************************
