@@ -1123,7 +1123,7 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
 
 
 //Compute MES(P) b=(c,r)
-  double c = Eigen::Vector3d::Zero();
+   Eigen::Vector3d c = Eigen::Vector3d::Zero();
 
   //Computing the median as the center
   for (const auto& p : *target)
@@ -1136,18 +1136,23 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
 
 
 // The vector descriing``forward'' for the robot (unit vector)
-  Eigen::Vector3d v = getWorldOrientation().col(0).normalized();
+  Eigen::Vector3d v = manipulator->getWorldOrientation().col(0).normalized();
   // Eigen::Vector3d origin = getWorldPosition();
   // Eigen::Vector3d forward_point = origin + forward;  // one unit ahead
 
+  if ((h-r)*std::tan(theta/2) < r){
+    log::error("Target points are out of flashlight range");
+    return false;
+  }
 
+//   compute segment s=[a, b] of valid apex positions
+  Eigen::Vector3d a = c - (h-r)*v;
+  Eigen::Vector3d b = c - (r/std::tan(theta/2))*v;
 
-//   compute segment s=[c+(r-l)*v. min(c-r*v, r/tan(theta/2))]
-  Eigen::Vector3d a = c + v*(r-h);
-  Eigen::Vector3d b = std::min(c-r*v, r/std::tan(theta/2))
-//   binary search over s to find closest valid point to c 
-
+  //   binary search over s to find closest valid point to c 
   
+
+
   // target_angle_vector.push_back(target_angle[0]);
   // target_angle_vector.push_back(target_angle[1]);
   // target_angle_vector.push_back(target_angle[2]);
@@ -1316,3 +1321,5 @@ bool SolverUsingCRAndGeometry::inverse_solver_using_geometry(Manipulator *manipu
 
   return true;
 }
+
+
