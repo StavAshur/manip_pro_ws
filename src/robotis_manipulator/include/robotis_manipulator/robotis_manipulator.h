@@ -26,6 +26,8 @@
 #include "robotis_manipulator_log.h"
 
 #include <algorithm>
+#include <iostream>
+
 
 namespace robotis_manipulator
 {

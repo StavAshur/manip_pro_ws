@@ -1137,7 +1137,6 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, Eigen::Matrix3d goal
 void RobotisManipulator::makeTaskTrajectory(Name tool_name, KinematicPose goal_pose, double move_time, std::vector<JointValue> present_joint_value)
 {
 
-
   trajectory_.setTrajectoryType(TASK_TRAJECTORY);
   trajectory_.setPresentControlToolName(tool_name);
   trajectory_.setMoveTime(move_time);
@@ -1149,32 +1148,15 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, KinematicPose goal_p
   }
 
   TaskWaypoint present_task_way_point = trajectory_.getPresentTaskWaypoint(tool_name);
-
   TaskWaypoint goal_task_way_point;                             //data conversion
   goal_task_way_point.kinematic = goal_pose;
   goal_task_way_point = trajectory_.removeWaypointDynamicData(goal_task_way_point);
-
   if(getMovingState())
   {
     moving_state_=false;
     while(!step_moving_state_) ;
   }
   trajectory_.makeTaskTrajectory(present_task_way_point, goal_task_way_point);
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///@todo: JUST FOR TESTING PURPOSES @author Stav
-    std::vector<Eigen::Vector3d> target;
-    target.push_back(Eigen::Vector3d(1.0, 1.0, 1.0));
-    JointWaypoint present_joint_way_point = trajectory_.getPresentJointWaypoint();
-    kinematics_->solveVisualInverseKinematics(trajectory_.getManipulator(), trajectory_.getPresentControlToolName(), &target, &present_joint_way_point);
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
   startMoving();
 }
@@ -1189,6 +1171,61 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, std::vector<Eigen::V
   log::println("========================");
   log::println("========================");
 
+
+  if(present_joint_value.size() != 0)
+  {
+    trajectory_.setPresentJointWaypoint(present_joint_value);
+    trajectory_.updatePresentWaypoint(kinematics_);
+  }
+
+  Manipulator* manipulator = trajectory_.getManipulator();
+
+  std::vector<JointValue> curr_joint_value = manipulator->getAllJointValue();
+
+  std::stringstream ss;
+  for (int i=0; i<6; i++) {
+    ss << curr_joint_value[i].position << " ";
+  }
+  ss << std::endl;
+  log::println(ss.str());
+  ss.str(std::string());
+  
+  std::vector<JointValue> goal_joint_value;
+
+  /// Solving inverse kinematics
+  kinematics_->solveVisualInverseKinematics(trajectory_.getManipulator(), trajectory_.getPresentControlToolName(), &target, &goal_joint_value);
+
+  /// Updating the robot's joints to get pose
+  manipulator->setAllActiveJointValue(goal_joint_value);
+  kinematics_->solveForwardKinematics(manipulator);
+
+  /// getting pose
+  KinematicPose goal_pose = manipulator->getWorldKinematicPose();
+
+  std::stringstream ss_pos;
+  std::stringstream ss_ori;
+
+  ss_pos << "Position: ["
+         << goal_pose.position.x() << ", "
+         << goal_pose.position.y() << ", "
+         << goal_pose.position.z() << "]";
+  log::println(ss_pos.str(), "CYAN");
+
+  for (int i = 0; i < 3; ++i)
+  {
+    std::stringstream ss_ori;
+    ss_ori << "Orientation row " << i << ": ["
+           << goal_pose.orientation(i, 0) << ", "
+           << goal_pose.orientation(i, 1) << ", "
+           << goal_pose.orientation(i, 2) << "]";
+    log::println(ss_ori.str(), "YELLOW");
+  }
+
+  /// Returning the robot to original position
+  manipulator->setAllActiveJointValue(curr_joint_value);
+  kinematics_->solveForwardKinematics(manipulator);
+  std::cerr << "Breakpoint 0" << std::endl;
+  makeTaskTrajectory(tool_name, goal_pose, move_time);
 }
 
 void RobotisManipulator::setCustomTrajectoryOption(Name trajectory_name, const void* arg)

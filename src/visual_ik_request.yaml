@@ -1,5 +1,5 @@
 visual_targets:
   - {x: 0.3, y: 0.4, z: 0.45}
   - {x: 0.3, y: 0.4, z: 0.15}
-end_effector_name: 'flashlight'
+end_effector_name: 'gripper'
 path_time: 2.0

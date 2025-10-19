@@ -1094,8 +1094,8 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
   std::vector<Eigen::Vector3d> *target,
   std::vector<JointValue> *goal_joint_value)
 {
-
-  Eigen::Vector3d v(1,2,3);
+  JointValue target_angle[6];
+  std::vector<JointValue> target_angle_vector;
 
   if (with_flashlight){
     log::println("------------------------------------");
@@ -1123,6 +1123,31 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
 //   compute segment s=[c+(r-l)*v. min(c-r*v, r/tan(alpha/2))]
 
 //   binary search over s to find closest valid point to c 
+
+  
+  // target_angle_vector.push_back(target_angle[0]);
+  // target_angle_vector.push_back(target_angle[1]);
+  // target_angle_vector.push_back(target_angle[2]);
+  // target_angle_vector.push_back(target_angle[3]);
+  // target_angle_vector.push_back(target_angle[4]);
+  // target_angle_vector.push_back(target_angle[5]);
+
+  target_angle[0].position = 0.0;
+  target_angle[1].position = 0.0;
+  target_angle[2].position = 0.0;
+  target_angle[3].position = 0.0;
+  target_angle[4].position = 0.0;
+  target_angle[5].position = 0.0;
+
+  target_angle_vector.push_back(target_angle[0]);
+  target_angle_vector.push_back(target_angle[1]);
+  target_angle_vector.push_back(target_angle[2]);
+  target_angle_vector.push_back(target_angle[3]);
+  target_angle_vector.push_back(target_angle[4]);
+  target_angle_vector.push_back(target_angle[5]);
+
+  *goal_joint_value = target_angle_vector;
+
   return true;
 }
 
