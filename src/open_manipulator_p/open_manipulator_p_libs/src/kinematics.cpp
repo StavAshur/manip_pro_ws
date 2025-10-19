@@ -1115,13 +1115,36 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
 
 //   pose {(x,y,z), v}
 
-//   get beam range l
-//   get beam angle alpha
+// Temporary until I set the flashlight up
+//   get beam range h
+//   get beam angle theta
+  double h = 10.0;
+  double theta = PI/6;
 
-//   compute MES(P) b=(c,r)
 
-//   compute segment s=[c+(r-l)*v. min(c-r*v, r/tan(alpha/2))]
+//Compute MES(P) b=(c,r)
+  double c = Eigen::Vector3d::Zero();
 
+  //Computing the median as the center
+  for (const auto& p : *target)
+        c += p;
+  c /= target->size();
+  // Computing distance to furthest point as radius
+  double r = 0.0;
+  for (const auto& p : *target)
+      r = std::max(r, (p - c).norm());
+
+
+// The vector descriing``forward'' for the robot (unit vector)
+  Eigen::Vector3d v = getWorldOrientation().col(0).normalized();
+  // Eigen::Vector3d origin = getWorldPosition();
+  // Eigen::Vector3d forward_point = origin + forward;  // one unit ahead
+
+
+
+//   compute segment s=[c+(r-l)*v. min(c-r*v, r/tan(theta/2))]
+  Eigen::Vector3d a = c + v*(r-h);
+  Eigen::Vector3d b = std::min(c-r*v, r/std::tan(theta/2))
 //   binary search over s to find closest valid point to c 
 
   
