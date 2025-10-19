@@ -299,14 +299,24 @@ void OpenManipulatorPController::goal_task_space_path_visual_target_callback(
   const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Request> req,
   const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Response> res)
 {
-
   std::vector<Eigen::Vector3d> target;
-  target.push_back(Eigen::Vector3d(1.0,1.0,1.0));
+  target.reserve(req->visual_targets.size());
+
+  for (const auto &p : req->visual_targets)
+  {
+    target.emplace_back(p.x, p.y, p.z);
+  }
+
+  std::stringstream ss;
+  for (Eigen::Vector3d &p : target) {
+    ss.str(std::string());
+    ss << "Received target: x=" << p[0] << ", y=" << p[1] << ", z=" << p[2];
+    log::println(ss.str());
+  }
 
   open_manipulator_p_.makeTaskTrajectory(req->end_effector_name, target, req->path_time);
 
   res->is_planned = true;
-  return;
 }
 
 void OpenManipulatorPController::goal_joint_space_path_from_present_callback(

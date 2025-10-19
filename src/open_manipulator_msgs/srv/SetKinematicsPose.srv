@@ -1,6 +1,7 @@
 string planning_group
 string end_effector_name
 KinematicsPose kinematics_pose
+geometry_msgs/Point[] visual_targets
 float64 path_time
 ---
 bool is_planned
