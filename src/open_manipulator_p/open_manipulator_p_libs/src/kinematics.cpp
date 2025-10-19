@@ -1087,7 +1087,6 @@ void SolverUsingCRAndGeometry::forward_solver_using_chain_rule(Manipulator *mani
 
 
 
-///@todo to be implemented later if plan is approved
 bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
   Manipulator *manipulator,
   Name tool_name,
@@ -1120,6 +1119,7 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
 //   get beam angle theta
   double h = 10.0;
   double theta = PI/6;
+  int max_iters = 20;
 
 
 //Compute MES(P) b=(c,r)
@@ -1150,7 +1150,26 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
   Eigen::Vector3d b = c - (r/std::tan(theta/2))*v;
 
   //   binary search over s to find closest valid point to c 
-  
+  double seg_length = (b - a).norm();
+  double coef = std::pow(2.0, -max_iters);
+  Eigen::Vector3d curr;
+
+  for (int iter = max_iters; iter > 0; --iter)
+  {
+    double step = coef * seg_length;            // step size shrinks exponentially
+    curr = a + step * v;  // move along segment
+    coef *= 2.0;
+
+
+    Pose target_pose;
+    target_pose.kinematic.position = curr;
+    target_pose.kinematic.orientation = manipulator->getWorldOrientation();
+    goal_joint_value->clear();
+
+    if (inverse_solver_using_geometry(manipulator, tool_name, target_pose, goal_joint_value)) {
+        return true;
+    }
+  }
 
 
   // target_angle_vector.push_back(target_angle[0]);
