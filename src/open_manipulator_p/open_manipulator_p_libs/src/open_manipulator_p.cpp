@@ -147,21 +147,48 @@ void OpenManipulatorP::init_open_manipulator_p(bool sim, STRING usb_port, STRING
     gripper_len = 0.1223;    
   }
 
-  addTool("gripper",  // my name
-          "joint6",   // parent name
-          math::vector3(gripper_len, 0.0, 0.0),               // relative position
-          // math::vector3(0.150, 0.0, 0.0),                  // relative position
-          math::convertRPYToRotationMatrix(0.0, 0.0, 0.0),    // relative orientation
-          gripper_id, // actuator id
-          1.1351,     // max gripper limit (0.01 m)
-          -0.001,     // min gripper limit (-0.01 m)
-          1.0,        // Change unit from `meter` to `radian`
-          3.2218127e-02 * 2,                                                    // mass
-          math::inertiaMatrix(9.5568826e-06, 2.8424644e-06, -3.2829197e-10,
-                              2.2552871e-05, -3.1463634e-10,
-                              1.7605306e-05),                                   // inertial tensor
-          math::vector3(0.028 + 8.3720668e-03, 0.0246, -4.2836895e-07)          // COM
-          );
+    addTool("gripper",  // my name
+            "joint6",   // parent name
+            math::vector3(gripper_len, 0.0, 0.0),               // relative position
+            // math::vector3(0.150, 0.0, 0.0),                  // relative position
+            math::convertRPYToRotationMatrix(0.0, 0.0, 0.0),    // relative orientation
+            gripper_id, // actuator id
+            1.1351,     // max gripper limit (0.01 m)
+            -0.001,     // min gripper limit (-0.01 m)
+            1.0,        // Change unit from `meter` to `radian`
+            3.2218127e-02 * 2,                                                    // mass
+            math::inertiaMatrix(9.5568826e-06, 2.8424644e-06, -3.2829197e-10,
+                                2.2552871e-05, -3.1463634e-10,
+                                1.7605306e-05),                                   // inertial tensor
+            math::vector3(0.028 + 8.3720668e-03, 0.0246, -4.2836895e-07)          // COM
+            );
+
+
+  /// @todo Currently causing issues. Maybe at some point I will add this
+  // int flashlight_id = -1;
+  // double flashlight_len = 0.0;
+  // if (with_flashlight) 
+  // {
+  //   flashlight_id = dxl_id[6];
+  //   flashlight_len = 0.2;    
+  
+
+  //   addTool("flashlight",  // my name
+  //           "joint6",   // parent name
+  //           math::vector3(flashlight_len, 0.0, 0.0),               // relative position
+  //           // math::vector3(0.150, 0.0, 0.0),                  // relative position
+  //           math::convertRPYToRotationMatrix(0.0, 0.0, 0.0),    // relative orientation
+  //           flashlight_id, // actuator id
+  //           0.000,     // max flashlight limit (0.01 m)
+  //           -0.000,     // min flashlight limit (-0.01 m)
+  //           1.0,        // Change unit from `meter` to `radian`
+  //           3.2218127e-02 * 2,                                                    // mass
+  //           math::inertiaMatrix(9.5568826e-06, 2.8424644e-06, -3.2829197e-10,
+  //                               2.2552871e-05, -3.1463634e-10,
+  //                               1.7605306e-05),                                   // inertial tensor
+  //           math::vector3(0.1, 0.0, 0.2)          // COM
+  //           );
+  // }
 
   /*****************************************************************************
   ** Initialize Kinematics 

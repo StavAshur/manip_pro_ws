@@ -37,7 +37,7 @@ def generate_launch_description():
     # urdf_file = os.path.join(get_package_share_directory('open_manipulator_p_description'), 'urdf', 'open_manipulator_p_robot.urdf.xacro')
     urdf_file = os.path.join(get_package_share_directory('open_manipulator_p_description'), 'urdf', 'open_manipulator_p_with_flashlight.urdf.xacro')
     rviz_file = os.path.join(get_package_share_directory('open_manipulator_p_description'), 'rviz', 'open_manipulator_p.rviz')
-
+    sphere_config = os.path.join(get_package_share_directory('environment_pkg'),'config','sphere_params.yaml')
     # urdf_file = os.path.join(get_package_share_directory('open_manipulator_p_description'), 'urdf', 'open_manipulator_p_with_gripper_robot.urdf.xacro')
     # rviz_file = os.path.join(get_package_share_directory('open_manipulator_p_description'), 'rviz', 'open_manipulator_p_with_gripper.rviz')
 
@@ -63,5 +63,13 @@ def generate_launch_description():
             node_executable='rviz2',
             node_name='rviz2',
             arguments=['-d', rviz_file],
-            output='screen')
+            output='screen'),
+        
+        Node(
+            package='environment_pkg',
+            node_executable='sphere_marker_node',
+            node_name='sphere_marker_node',
+            parameters=[sphere_config],
+            output='screen'
+        )
     ])

@@ -25,6 +25,8 @@
   #include <robotis_manipulator/robotis_manipulator.h>
 #endif
 
+#include <iostream>
+
 //#define KINEMATICS_DEBUG
 
 using namespace Eigen;
@@ -120,7 +122,7 @@ class SolverUsingCRAndGeometry : public robotis_manipulator::Kinematics
 {
 private:
   bool with_gripper_ = false;
-  bool with_flashlight = false;
+  bool with_flashlight_ = false;
 
   void forward_solver_using_chain_rule(Manipulator *manipulator, Name component_name);
   bool inverse_solver_using_geometry(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);

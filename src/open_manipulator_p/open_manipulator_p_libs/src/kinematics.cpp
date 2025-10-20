@@ -1012,10 +1012,12 @@ bool SolverCustomizedforOMChain::chain_custom_inverse_kinematics(Manipulator *ma
 void SolverUsingCRAndGeometry::setOption(std::string var_name, const void *arg)
 {
   
-  if (var_name == "with_gripper")
-    with_gripper_ = arg;
-  else if (var_name == "with_flashlight")
-    with_flashlight = arg;
+  if (var_name == "with_gripper") {
+    with_gripper_ = *(bool *)(arg);
+  }
+  else if (var_name == "with_flashlight") {
+    with_flashlight_ = *(bool *)(arg);
+  }
 }
 
 Eigen::MatrixXd SolverUsingCRAndGeometry::jacobian(Manipulator *manipulator, Name tool_name)
@@ -1096,7 +1098,7 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
   JointValue target_angle[6];
   std::vector<JointValue> target_angle_vector;
 
-  if (with_flashlight){
+  if (with_flashlight_){
     log::println("------------------------------------");
     log::println("------------------------------------");
     log::println("------------------------------------");
@@ -1117,8 +1119,8 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
 // Temporary until I set the flashlight up
 //   get beam range h
 //   get beam angle theta
-  double h = 10.0;
-  double theta = PI/6;
+  double h = 5.0;
+  double theta = PI/3;
   int max_iters = 20;
 
 
@@ -1134,6 +1136,7 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
   for (const auto& p : *target)
       r = std::max(r, (p - c).norm());
 
+  
 
 // The vector descriing``forward'' for the robot (unit vector)
   Eigen::Vector3d v = manipulator->getWorldOrientation().col(0).normalized();
@@ -1144,58 +1147,113 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
     log::error("Target points are out of flashlight range");
     return false;
   }
+  
 
-//   compute segment s=[a, b] of valid apex positions
+  // Compute segment s=[a, b] of valid apex positions
   Eigen::Vector3d a = c - (h-r)*v;
   Eigen::Vector3d b = c - (r/std::tan(theta/2))*v;
 
-  //   binary search over s to find closest valid point to c 
+  // Exponential search over s to find closest valid point to c 
   double seg_length = (b - a).norm();
-  double coef = std::pow(2.0, -max_iters);
-  Eigen::Vector3d curr;
 
-  for (int iter = max_iters; iter > 0; --iter)
-  {
-    double step = coef * seg_length;            // step size shrinks exponentially
-    curr = a + step * v;  // move along segment
-    coef *= 2.0;
+  std::cerr << "[DEBUG] c: " << c.transpose() << std::endl;
+  std::cerr << "[DEBUG] v: " << v.transpose() << std::endl;
+  std::cerr << "[DEBUG] h: " << h << ", r: " << r << ", theta: " << theta << std::endl;
+  std::cerr << "[DEBUG] Segment a: " << a.transpose() << std::endl;
+  std::cerr << "[DEBUG] Segment b: " << b.transpose() << std::endl;
+
+  for (int direction = 1; direction > -2; direction -= 2){
+
+    double coef = direction * std::pow(2.0, -max_iters);
+    Eigen::Vector3d curr;
+
+    for (int iter = max_iters; iter > 0; --iter)
+    {
+      double step = coef * seg_length;
+      curr = a + step * v;
+      coef *= 2.0;
+      Pose target_pose;
+      target_pose.kinematic.position = curr;
+      target_pose.kinematic.orientation = manipulator->getWorldOrientation();
 
 
-    Pose target_pose;
-    target_pose.kinematic.position = curr;
-    target_pose.kinematic.orientation = manipulator->getWorldOrientation();
-    goal_joint_value->clear();
+      std::cerr << "[DEBUG] --------------------------------------------" << std::endl;
+      std::cerr << "[DEBUG] Iteration: " << (max_iters - iter + 1) << std::endl;
+      std::cerr << "[DEBUG] Current coef: " << coef << std::endl;
+      std::cerr << "[DEBUG] Step size: " << step << std::endl;
+      std::cerr << "[DEBUG] Current apex position (curr): " << curr.transpose() << std::endl;
 
-    if (inverse_solver_using_geometry(manipulator, tool_name, target_pose, goal_joint_value)) {
-        return true;
+
+      goal_joint_value->clear();
+      if (inverse_solver_using_geometry(manipulator, tool_name, target_pose, goal_joint_value)) {
+          return true;
+      }
     }
+    // Now try the reverse order
+    curr = a;
+    a = b;
+    b = curr;
   }
 
+  // // Compute segment s=[a, b] of valid apex positions
+  // Eigen::Vector3d a = c - (h - r) * v;
+  // Eigen::Vector3d b = c - (r / std::tan(theta / 2)) * v;
 
-  // target_angle_vector.push_back(target_angle[0]);
-  // target_angle_vector.push_back(target_angle[1]);
-  // target_angle_vector.push_back(target_angle[2]);
-  // target_angle_vector.push_back(target_angle[3]);
-  // target_angle_vector.push_back(target_angle[4]);
-  // target_angle_vector.push_back(target_angle[5]);
+  // std::cerr << "[DEBUG] c: " << c.transpose() << std::endl;
+  // std::cerr << "[DEBUG] v: " << v.transpose() << std::endl;
+  // std::cerr << "[DEBUG] h: " << h << ", r: " << r << ", theta: " << theta << std::endl;
+  // std::cerr << "[DEBUG] Segment a: " << a.transpose() << std::endl;
+  // std::cerr << "[DEBUG] Segment b: " << b.transpose() << std::endl;
 
-  target_angle[0].position = 0.0;
-  target_angle[1].position = 0.0;
-  target_angle[2].position = 0.0;
-  target_angle[3].position = 0.0;
-  target_angle[4].position = 0.0;
-  target_angle[5].position = 0.0;
+  // // Exponential search over s to find closest valid point to c
+  // double seg_length = (b - a).norm();
+  // double coef = std::pow(2.0, -max_iters);
+  // Eigen::Vector3d curr;
 
-  target_angle_vector.push_back(target_angle[0]);
-  target_angle_vector.push_back(target_angle[1]);
-  target_angle_vector.push_back(target_angle[2]);
-  target_angle_vector.push_back(target_angle[3]);
-  target_angle_vector.push_back(target_angle[4]);
-  target_angle_vector.push_back(target_angle[5]);
+  // std::cerr << "[DEBUG] seg_length: " << seg_length << std::endl;
+  // std::cerr << "[DEBUG] Initial coef: " << coef << std::endl;
+  // std::cerr << "[DEBUG] max_iters: " << max_iters << std::endl;
 
-  *goal_joint_value = target_angle_vector;
+  // for (int iter = max_iters; iter > 0; --iter)
+  // {
+  //   double step = coef * seg_length;
+  //   curr = a + step * v;
 
-  return true;
+  //   std::cerr << "[DEBUG] --------------------------------------------" << std::endl;
+  //   std::cerr << "[DEBUG] Iteration: " << (max_iters - iter + 1) << std::endl;
+  //   std::cerr << "[DEBUG] Current coef: " << coef << std::endl;
+  //   std::cerr << "[DEBUG] Step size: " << step << std::endl;
+  //   std::cerr << "[DEBUG] Current apex position (curr): " << curr.transpose() << std::endl;
+
+  //   coef *= 2.0;
+
+  //   Pose target_pose;
+  //   target_pose.kinematic.position = curr;
+  //   target_pose.kinematic.orientation = manipulator->getWorldOrientation();
+
+  //   std::cerr << "[DEBUG] Target pose position: " << target_pose.kinematic.position.transpose() << std::endl;
+  //   Eigen::Matrix3d R = target_pose.kinematic.orientation;
+  //   std::cerr << "[DEBUG] Target pose orientation (R):" << std::endl << R << std::endl;
+
+  //   goal_joint_value->clear();
+  //   std::cerr << "[DEBUG] Cleared goal_joint_value. Calling inverse_solver_using_geometry..." << std::endl;
+
+  //   bool success = inverse_solver_using_geometry(manipulator, tool_name, target_pose, goal_joint_value);
+  //   std::cerr << "[DEBUG] inverse_solver_using_geometry result: " << (success ? "SUCCESS" : "FAILURE") << std::endl;
+
+  //   if (success)
+  //   {
+  //       std::cerr << "[DEBUG] Valid apex position found at iteration " << (max_iters - iter + 1) << std::endl;
+  //       std::cerr << "[DEBUG] Returning true." << std::endl;
+  //       return true;
+  //   }
+
+  // }
+
+  // std::cerr << "[DEBUG] No valid apex position found after " << max_iters << " iterations." << std::endl;
+  // std::cerr << "[DEBUG] Returning false." << std::endl;
+
+  return false;
 }
 
 
@@ -1219,6 +1277,13 @@ bool SolverUsingCRAndGeometry::inverse_solver_using_geometry(Manipulator *manipu
     auto tool_length = _manipulator.getComponentRelativePositionFromParent(tool_name);
     d6 += tool_length(0);
   }
+  /// @todo This is a stupid patch until I understand how to add a link with no joint or a new tool
+  /// @author Stav
+  if (with_flashlight_)
+  {
+    d6 += 0.2;
+  }
+
   Eigen::Vector3d position_2 = Eigen::VectorXd::Zero(3);
   position_2 << orientation(0,0), orientation(1,0), orientation(2,0);
   Eigen::Vector3d position_3 = Eigen::VectorXd::Zero(3);

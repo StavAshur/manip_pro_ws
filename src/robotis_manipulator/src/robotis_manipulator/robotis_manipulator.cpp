@@ -1183,6 +1183,7 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, std::vector<Eigen::V
   std::vector<JointValue> curr_joint_value = manipulator->getAllJointValue();
 
   std::stringstream ss;
+  ss << "curr joint value ";
   for (int i=0; i<6; i++) {
     ss << curr_joint_value[i].position << " ";
   }
@@ -1192,15 +1193,29 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, std::vector<Eigen::V
   
   std::vector<JointValue> goal_joint_value;
 
+
   /// Solving inverse kinematics
   kinematics_->solveVisualInverseKinematics(trajectory_.getManipulator(), trajectory_.getPresentControlToolName(), &target, &goal_joint_value);
 
+
+  ss << "goal joint value ";
+  for (int i=0; i<6; i++) {
+    ss << goal_joint_value[i].position << " ";
+  }
+  ss << std::endl;
+  log::println(ss.str());
+  ss.str(std::string());
+
   /// Updating the robot's joints to get pose
   manipulator->setAllActiveJointValue(goal_joint_value);
+
   kinematics_->solveForwardKinematics(manipulator);
 
   /// getting pose
-  KinematicPose goal_pose = manipulator->getWorldKinematicPose();
+  // KinematicPose goal_pose = manipulator->getWorldKinematicPose();
+  std::cerr << "BEFORE" << std::endl;
+  KinematicPose goal_pose = manipulator->getComponentKinematicPoseFromWorld("joint6");
+  std::cerr << "AFTER" << std::endl;
 
   std::stringstream ss_pos;
   std::stringstream ss_ori;
@@ -1224,7 +1239,7 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, std::vector<Eigen::V
   /// Returning the robot to original position
   manipulator->setAllActiveJointValue(curr_joint_value);
   kinematics_->solveForwardKinematics(manipulator);
-  std::cerr << "Breakpoint 0" << std::endl;
+  std::cerr << "robotis_manipulator.cpp breakpoint 3" << std::endl;
   makeTaskTrajectory(tool_name, goal_pose, move_time);
 }
 
