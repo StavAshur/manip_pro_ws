@@ -140,6 +140,15 @@ Visualization Manager:
                         {}
       Update Interval: 0
       Value: true
+    - Class: rviz_default_plugins/Marker
+      Enabled: true
+      Name: Marker
+      Namespaces:
+        sphere_marker: true
+      Queue Size: 10
+      Topic: /visualization_marker
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 225; 225; 225
