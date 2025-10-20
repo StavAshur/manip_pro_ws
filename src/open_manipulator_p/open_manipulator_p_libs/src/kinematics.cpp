@@ -1119,7 +1119,7 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
 // Temporary until I set the flashlight up
 //   get beam range h
 //   get beam angle theta
-  double h = 5.0;
+  double h = 1.0;
   double theta = PI/3;
   int max_iters = 20;
 
@@ -1162,7 +1162,7 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
   std::cerr << "[DEBUG] Segment a: " << a.transpose() << std::endl;
   std::cerr << "[DEBUG] Segment b: " << b.transpose() << std::endl;
 
-  for (int direction = 1; direction > -2; direction -= 2){
+  for (int direction = -1; direction < 2; direction += 2){
 
     double coef = direction * std::pow(2.0, -max_iters);
     Eigen::Vector3d curr;
@@ -1170,7 +1170,7 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
     for (int iter = max_iters; iter > 0; --iter)
     {
       double step = coef * seg_length;
-      curr = a + step * v;
+      curr = b + step * v;
       coef *= 2.0;
       Pose target_pose;
       target_pose.kinematic.position = curr;

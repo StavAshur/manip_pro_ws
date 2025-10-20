@@ -1,5 +1,5 @@
 visual_targets:
-  - {x: 0.7, y: 0.1, z: 0.4}
-  - {x: 0.7, y: 0.1, z: 0.7}
+  - {x: 0.9, y: -0.2, z: 0.4}
+  - {x: 0.9, y: -0.2, z: 0.1}
 end_effector_name: 'gripper'
 path_time: 2.0
