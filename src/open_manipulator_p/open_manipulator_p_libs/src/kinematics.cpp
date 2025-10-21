@@ -81,7 +81,7 @@ bool SolverUsingCRAndJacobian::solveInverseKinematics(Manipulator *manipulator, 
   return inverse_solver_using_jacobian(manipulator, tool_name, target_pose, goal_joint_value);
 }
 
-bool SolverUsingCRAndJacobian::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRAndJacobian::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value, Eigen::Matrix3d goal_orientation)
 {
   throw std::runtime_error("Not implemented");
 }
@@ -239,7 +239,7 @@ bool SolverUsingCRAndSRJacobian::solveInverseKinematics(Manipulator *manipulator
   return inverse_solver_using_sr_jacobian(manipulator, tool_name, target_pose, goal_joint_value);
 }
 
-bool SolverUsingCRAndSRJacobian::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRAndSRJacobian::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value, Eigen::Matrix3d goal_orientation)
 {
   throw std::runtime_error("Not implemented");
 }
@@ -510,7 +510,7 @@ bool SolverUsingCRAndSRPositionOnlyJacobian::solveInverseKinematics(Manipulator 
   return inverse_solver_using_position_only_sr_jacobian(manipulator, tool_name, target_pose, goal_joint_value);
 }
 
-bool SolverUsingCRAndSRPositionOnlyJacobian::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRAndSRPositionOnlyJacobian::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value, Eigen::Matrix3d goal_orientation)
 {
   throw std::runtime_error("Not implemented");
 }
@@ -781,7 +781,7 @@ bool SolverCustomizedforOMChain::solveInverseKinematics(Manipulator *manipulator
   return chain_custom_inverse_kinematics(manipulator, tool_name, target_pose, goal_joint_value);
 }
 
-bool SolverCustomizedforOMChain::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+bool SolverCustomizedforOMChain::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value, Eigen::Matrix3d goal_orientation)
 {
   throw std::runtime_error("Not implemented");
 }
@@ -1036,9 +1036,9 @@ bool SolverUsingCRAndGeometry::solveInverseKinematics(Manipulator *manipulator, 
   return inverse_solver_using_geometry(manipulator, tool_name, target_pose, goal_joint_value);
 }
 
-bool SolverUsingCRAndGeometry::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRAndGeometry::solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value, Eigen::Matrix3d goal_orientation)
 {
-  return visual_inverse_solver_using_geometry(manipulator, tool_name, target, goal_joint_value);
+  return visual_inverse_solver_using_geometry(manipulator, tool_name, target, goal_joint_value, goal_orientation);
 }
 
 //private
@@ -1086,14 +1086,12 @@ void SolverUsingCRAndGeometry::forward_solver_using_chain_rule(Manipulator *mani
 
 
 
-
-
-
 bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
   Manipulator *manipulator,
   Name tool_name,
   std::vector<Eigen::Vector3d> *target,
-  std::vector<JointValue> *goal_joint_value)
+  std::vector<JointValue> *goal_joint_value,
+  Eigen::Matrix3d goal_orientation)
 {
   JointValue target_angle[6];
   std::vector<JointValue> target_angle_vector;
@@ -1137,17 +1135,18 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
       r = std::max(r, (p - c).norm());
 
   
-
-// The vector descriing``forward'' for the robot (unit vector)
-  Eigen::Vector3d v = manipulator->getWorldOrientation().col(0).normalized();
-  // Eigen::Vector3d origin = getWorldPosition();
-  // Eigen::Vector3d forward_point = origin + forward;  // one unit ahead
+  Eigen::Vector3d v;
+  // The vector descriing``forward'' for the robot (unit vector)
+  if (!goal_orientation.isZero()) 
+    v = goal_orientation.col(0).normalized();
+  else
+    throw std::runtime_error("Finding an orientation is not implemented yet");
+  
 
   if ((h-r)*std::tan(theta/2) < r){
     log::error("Target points are out of flashlight range");
     return false;
   }
-  
 
   // Compute segment s=[a, b] of valid apex positions
   Eigen::Vector3d a = c - (h-r)*v;

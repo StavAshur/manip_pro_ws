@@ -40,7 +40,7 @@ public:
   virtual Eigen::MatrixXd jacobian(Manipulator *manipulator, Name tool_name) = 0;
   virtual void solveForwardKinematics(Manipulator *manipulator) = 0;
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_position) = 0;
-  virtual bool solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value) = 0;
+  virtual bool solveVisualInverseKinematics(Manipulator *manipulator, Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value, Eigen::Matrix3d goal_orientation = Eigen::Matrix3d::Zero()) = 0;
 };
 
 class JointActuator

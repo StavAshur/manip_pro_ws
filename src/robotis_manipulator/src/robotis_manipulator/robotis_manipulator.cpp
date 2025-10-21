@@ -215,9 +215,9 @@ bool RobotisManipulator::solveInverseKinematics(Name tool_name, Pose goal_pose, 
   return kinematics_->solveInverseKinematics(&manipulator_, tool_name, goal_pose, goal_joint_value);
 }
 
-bool RobotisManipulator::solveVisualInverseKinematics(Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value)
+bool RobotisManipulator::solveVisualInverseKinematics(Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value, Eigen::Matrix3d goal_orientation)
 {
-  return kinematics_->solveVisualInverseKinematics(&manipulator_, tool_name, target, goal_joint_value);
+  return kinematics_->solveVisualInverseKinematics(&manipulator_, tool_name, target, goal_joint_value, goal_orientation);
 }
 
 void RobotisManipulator::setKinematicsOption(std::string var_name, const void* arg)
@@ -1161,16 +1161,23 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, KinematicPose goal_p
   startMoving();
 }
 
-void RobotisManipulator::makeTaskTrajectory(Name tool_name, std::vector<Eigen::Vector3d> target, double move_time, std::vector<JointValue> present_joint_value)
+void RobotisManipulator::makeTaskTrajectory(Name tool_name,
+                                            std::vector<Eigen::Vector3d> target,
+                                            double move_time, 
+                                            std::vector<JointValue> present_joint_value)
 {
-  log::println("========================");
-  log::println("========================");
-  log::println("========================");
-  log::println("Recieved a visual target");
-  log::println("========================");
-  log::println("========================");
-  log::println("========================");
+  Eigen::Matrix3d orientation = trajectory_.getManipulator()->getComponentOrientationFromWorld(tool_name);
 
+  makeTaskTrajectory(tool_name, target, orientation, move_time);
+}
+
+
+void RobotisManipulator::makeTaskTrajectory(Name tool_name,
+                                            std::vector<Eigen::Vector3d> target,
+                                            Eigen::Matrix3d goal_orientation,
+                                            double move_time,
+                                            std::vector<JointValue> present_joint_value)
+{
 
   if(present_joint_value.size() != 0)
   {
@@ -1195,7 +1202,7 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, std::vector<Eigen::V
 
 
   /// Solving inverse kinematics
-  kinematics_->solveVisualInverseKinematics(trajectory_.getManipulator(), trajectory_.getPresentControlToolName(), &target, &goal_joint_value);
+  kinematics_->solveVisualInverseKinematics(trajectory_.getManipulator(), trajectory_.getPresentControlToolName(), &target, &goal_joint_value, goal_orientation);
 
 
   ss << "goal joint value ";
@@ -1242,6 +1249,7 @@ void RobotisManipulator::makeTaskTrajectory(Name tool_name, std::vector<Eigen::V
   std::cerr << "robotis_manipulator.cpp breakpoint 3" << std::endl;
   makeTaskTrajectory(tool_name, goal_pose, move_time);
 }
+
 
 void RobotisManipulator::setCustomTrajectoryOption(Name trajectory_name, const void* arg)
 {

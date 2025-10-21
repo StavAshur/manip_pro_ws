@@ -122,7 +122,7 @@ public:
   Eigen::MatrixXd jacobian(Name tool_name);
   void solveForwardKinematics();
   bool solveInverseKinematics(Name tool_name, Pose goal_pose, std::vector<JointValue> *goal_joint_value);
-  bool solveVisualInverseKinematics(Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value);
+  bool solveVisualInverseKinematics(Name tool_name, std::vector<Eigen::Vector3d>* target, std::vector<JointValue> *goal_joint_value, Eigen::Matrix3d goal_orientation = Eigen::Matrix3d::Zero());
   void setKinematicsOption(std::string var_name, const void* arg);
 
 
@@ -193,6 +193,7 @@ public:
   void makeTaskTrajectory(Name tool_name, Eigen::Matrix3d goal_orientation, double move_time, std::vector<JointValue> present_joint_value = {});
   void makeTaskTrajectory(Name tool_name, KinematicPose goal_pose, double move_time, std::vector<JointValue> present_joint_value = {});
   void makeTaskTrajectory(Name tool_name, std::vector<Eigen::Vector3d> target, double move_time, std::vector<JointValue> present_joint_value = {});
+  void makeTaskTrajectory(Name tool_name, std::vector<Eigen::Vector3d> target, Eigen::Matrix3d goal_orientation, double move_time, std::vector<JointValue> present_joint_value = {});
 
   void setCustomTrajectoryOption(Name trajectory_name, const void* arg);
   void makeCustomTrajectory(Name trajectory_name, Name tool_name, const void *arg, double move_time, std::vector<JointValue> present_joint_value = {});

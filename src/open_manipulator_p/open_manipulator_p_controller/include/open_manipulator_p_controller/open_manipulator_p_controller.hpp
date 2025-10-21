@@ -114,6 +114,7 @@ class OpenManipulatorPController : public rclcpp::Node
   rclcpp::Service<open_manipulator_msgs::srv::SetKinematicsPose>::SharedPtr goal_task_space_path_position_only_server_;
   rclcpp::Service<open_manipulator_msgs::srv::SetKinematicsPose>::SharedPtr goal_task_space_path_orientation_only_server_;
   rclcpp::Service<open_manipulator_msgs::srv::SetKinematicsPose>::SharedPtr goal_task_space_path_visual_target_server_;
+  rclcpp::Service<open_manipulator_msgs::srv::SetKinematicsPose>::SharedPtr goal_task_space_path_visual_target_only_server_;
   rclcpp::Service<open_manipulator_msgs::srv::SetJointPosition>::SharedPtr goal_joint_space_path_from_present_server_;
   rclcpp::Service<open_manipulator_msgs::srv::SetKinematicsPose>::SharedPtr goal_task_space_path_from_present_position_only_server_;
   rclcpp::Service<open_manipulator_msgs::srv::SetKinematicsPose>::SharedPtr goal_task_space_path_from_present_orientation_only_server_;
@@ -144,6 +145,9 @@ class OpenManipulatorPController : public rclcpp::Node
     const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Request> req,
     const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Response> res);
   void goal_task_space_path_visual_target_callback(
+    const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Request> req,
+    const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Response> res);
+  void goal_task_space_path_visual_target_only_callback(
     const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Request> req,
     const std::shared_ptr<open_manipulator_msgs::srv::SetKinematicsPose::Response> res);
   void goal_joint_space_path_from_present_callback(
