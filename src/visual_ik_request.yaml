@@ -6,7 +6,7 @@ path_time: 2.0
 kinematics_pose:
   pose:
     orientation:
-      x: 0.4
+      x: -0.7
       y: 0.1
       z: 0.2
       w: 0.3

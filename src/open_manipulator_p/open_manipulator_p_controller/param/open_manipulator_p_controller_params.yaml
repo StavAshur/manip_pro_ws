@@ -7,7 +7,7 @@ open_manipulator_p_controller:
   ros__parameters:
     sim: true
     control_period: 0.010
-    with_gripper: true
+    with_gripper: false
     with_flashlight: true
 
     port_name: "/dev/ttyUSB0"

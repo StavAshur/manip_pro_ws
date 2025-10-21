@@ -1173,7 +1173,7 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
       coef *= 2.0;
       Pose target_pose;
       target_pose.kinematic.position = curr;
-      target_pose.kinematic.orientation = manipulator->getWorldOrientation();
+      target_pose.kinematic.orientation = goal_orientation;
 
 
       std::cerr << "[DEBUG] --------------------------------------------" << std::endl;
