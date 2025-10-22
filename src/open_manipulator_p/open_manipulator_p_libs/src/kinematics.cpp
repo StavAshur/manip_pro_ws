@@ -1185,6 +1185,11 @@ bool SolverUsingCRAndGeometry::visual_inverse_solver_using_geometry(
 
       goal_joint_value->clear();
       if (inverse_solver_using_geometry(manipulator, tool_name, target_pose, goal_joint_value)) {
+          std::cerr << "[DEBUG] goal joint value after standard IK";
+          for (int i=0; i<6; i++) {
+            std::cerr << goal_joint_value->at(i).position << " ";
+          }
+          std::cerr << std::endl;
           return true;
       }
     }
@@ -1280,7 +1285,7 @@ bool SolverUsingCRAndGeometry::inverse_solver_using_geometry(Manipulator *manipu
   /// @author Stav
   if (with_flashlight_)
   {
-    d6 += 0.2;
+    d6 += 0.1;
   }
 
   Eigen::Vector3d position_2 = Eigen::VectorXd::Zero(3);
