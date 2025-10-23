@@ -334,6 +334,13 @@ bool DynamixelDriver::scan(uint8_t *get_id, uint8_t *get_the_number_of_id, uint8
 
 bool DynamixelDriver::ping(uint8_t id, uint16_t *get_model_number, const char **log)
 {
+
+
+  std::cerr << "id is: " << (int)(id & 0xff) << std::endl <<
+              "get_model_number: " << *get_model_number << std::endl <<
+              "log: " << *log << std::endl;
+
+
   ErrorFromSDK sdk_error = {0, false, false, 0};
   bool result = false;
 
@@ -343,6 +350,7 @@ bool DynamixelDriver::ping(uint8_t id, uint16_t *get_model_number, const char **
   if (result == false) return false;
 
   sdk_error.dxl_comm_result = packetHandler_->ping(portHandler_, id, &model_number, &sdk_error.dxl_error);  
+
   if (sdk_error.dxl_comm_result != COMM_SUCCESS)
   {
     if (log != NULL)  *log = packetHandler_->getTxRxResult(sdk_error.dxl_comm_result);
@@ -355,13 +363,17 @@ bool DynamixelDriver::ping(uint8_t id, uint16_t *get_model_number, const char **
   {
     setTool(model_number, id);
     if (get_model_number != NULL) *get_model_number = model_number;
+        std::cerr << "================== returning true =================" << std::endl;
+
     return true;
   }
 
   result = setPacketHandler(2.0f, log);
+  
   if (result == false) return false;
 
   sdk_error.dxl_comm_result = packetHandler_->ping(portHandler_, id, &model_number, &sdk_error.dxl_error);  
+
   if (sdk_error.dxl_comm_result != COMM_SUCCESS)
   {
     if (log != NULL)  *log = packetHandler_->getTxRxResult(sdk_error.dxl_comm_result);
@@ -374,8 +386,11 @@ bool DynamixelDriver::ping(uint8_t id, uint16_t *get_model_number, const char **
   {
     setTool(model_number, id);
     if (get_model_number != NULL) *get_model_number = model_number;
+    std::cerr << "================== returning true =================" << std::endl;
+
     return true;
   }  
+  
 
   return false;
 }
@@ -624,6 +639,8 @@ bool DynamixelDriver::writeRegister(uint8_t id, const char *item_name, int32_t d
     usleep(1000*10);
 #endif
 
+  std::cerr << "data length is " << (int)(control_item->data_length & 0xff) << std::endl;
+
   switch (control_item->data_length)
   {
     case BYTE:
@@ -659,6 +676,8 @@ bool DynamixelDriver::writeRegister(uint8_t id, const char *item_name, int32_t d
      break;
   }
 
+  std::cerr << "Error code in writeRegister is: " << (int)(sdk_error.dxl_error & 0xff) << std::endl;
+
   if (sdk_error.dxl_comm_result != COMM_SUCCESS)
   {
     if (log != NULL) *log = packetHandler_->getTxRxResult(sdk_error.dxl_comm_result);
@@ -667,6 +686,7 @@ bool DynamixelDriver::writeRegister(uint8_t id, const char *item_name, int32_t d
   else if (sdk_error.dxl_error != 0)
   {
     if (log != NULL) *log = packetHandler_->getRxPacketError(sdk_error.dxl_error);
+
     return false;
   }
   else

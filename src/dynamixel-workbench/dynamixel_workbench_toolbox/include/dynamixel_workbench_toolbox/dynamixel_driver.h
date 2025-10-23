@@ -20,6 +20,7 @@
 #define DYNAMIXEL_DRIVER_H
 
 #include "dynamixel_tool.h"
+#include <iostream>
 
 #if defined(__OPENCR__) || defined(__OPENCM904__)
   #include <Arduino.h>

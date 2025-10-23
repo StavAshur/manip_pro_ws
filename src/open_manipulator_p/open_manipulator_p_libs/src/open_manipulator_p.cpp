@@ -223,6 +223,15 @@ void OpenManipulatorP::init_open_manipulator_p(bool sim, STRING usb_port, STRING
     jointDxlId.push_back(dxl_id[3]);
     jointDxlId.push_back(dxl_id[4]);
     jointDxlId.push_back(dxl_id[5]);
+
+    std::cerr << "open_manipulator_p.cpp: ids are "
+              << (int)(jointDxlId[0] & 0xff) << ", "
+              << (int)(jointDxlId[1] & 0xff) << ", "
+              << (int)(jointDxlId[2] & 0xff) << ", "
+              << (int)(jointDxlId[3] & 0xff) << ", "
+              << (int)(jointDxlId[4] & 0xff) << ", "
+              << (int)(jointDxlId[5] & 0xff) << ", " << std::endl;
+
     addJointActuator(JOINT_DYNAMIXEL, actuator_, jointDxlId, p_dxl_comm_arg);
 
     // Set joint actuator control mode

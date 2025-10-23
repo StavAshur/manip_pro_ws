@@ -36,6 +36,7 @@ OpenManipulatorPController::OpenManipulatorPController(std::string usb_port, std
   ************************************************************/
   open_manipulator_p_.init_open_manipulator_p(sim_, usb_port, baud_rate, control_period_, with_gripper_, with_flashlight_);
 
+
   if (sim_ == false) RCLCPP_INFO(this->get_logger(), "Succeeded to Initialise OpenMANIPULATOR-P Controller");
   else RCLCPP_INFO(this->get_logger(), "Ready to Simulate OpenMANIPULATOR-P on RViz");
 

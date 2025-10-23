@@ -24,7 +24,7 @@
 
 
 #include "packet_handler.h"
-
+#include <iostream>
 namespace dynamixel
 {
 

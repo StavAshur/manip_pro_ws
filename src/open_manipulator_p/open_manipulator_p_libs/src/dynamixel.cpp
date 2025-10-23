@@ -17,6 +17,7 @@
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
 #include "../include/open_manipulator_p_libs/dynamixel.hpp"
+#include <iostream>
 
 using namespace dynamixel;
 using namespace robotis_manipulator;
@@ -27,7 +28,7 @@ using namespace robotis_manipulator;
 void JointDynamixel::init(std::vector<uint8_t> actuator_id, const void *arg)
 {
   STRING *get_arg_ = (STRING *)arg;
-
+  
   bool result = JointDynamixel::initialize(actuator_id ,get_arg_[0], get_arg_[1]);
 
   if (result == false)
@@ -122,7 +123,7 @@ std::vector<robotis_manipulator::ActuatorValue> JointDynamixel::receiveJointActu
 ** Functions called in Joint Dynamixel Control Functions
 *****************************************************************************/
 bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, STRING dxl_device_name, STRING dxl_baud_rate)
-{
+{ 
   bool result = false;
   const char* log = NULL;
 
@@ -167,8 +168,11 @@ bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, STRING dxl_dev
       // }
 
       result = dynamixel_workbench_->writeRegister(id, return_delay_time_char, 0, &log);
+      
       if (result == false)
       {
+        std::cerr << "THIS IS WHERE THE ERROR IS CAUGHT" << std::endl;
+
         log::error(log);
         log::error("Please check your Dynamixel firmware version");
       }
@@ -835,7 +839,6 @@ bool GripperDynamixel::initialize(uint8_t actuator_id, STRING dxl_device_name, S
     //   log::error(log);
     //   log::error("Please check your Dynamixel firmware version (v38~)");
     // }
-
     result = dynamixel_workbench_->writeRegister(dynamixel_.id.at(0), return_delay_time_char, 0, &log);
     if (result == false)
     {

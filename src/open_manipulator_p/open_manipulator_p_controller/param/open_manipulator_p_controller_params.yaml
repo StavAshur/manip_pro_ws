@@ -1,25 +1,27 @@
-﻿# open_manipulator_p_controller:
+﻿open_manipulator_p_controller:
+  ros__parameters:
+    sim: false
+    control_period: 0.010
+    with_gripper: false
+    with_flashlight: false
+
+# open_manipulator_p_controller:
 #   ros__parameters:
 #     sim: false
 #     control_period: 0.010
 #     with_gripper: false
-open_manipulator_p_controller:
-  ros__parameters:
-    sim: true
-    control_period: 0.010
-    with_gripper: false
-    with_flashlight: true
+#     with_flashlight: true
 
-    port_name: "/dev/ttyUSB0"
-    baud_rate: 1000000
+#     port_name: "/dev/ttyUSB0"
+#     baud_rate: 1000000
 
-    joint:
-      ids: [5, 6, 3, 4, 1, 2]
-      model_names: [
-        "PRO-PLUS-PH54-200-S500-R",
-        "PRO-PLUS-PH54-200-S500-R",
-        "PRO-PLUS-PH54-100-S500-R",
-        "PRO-PLUS-PH54-100-S500-R",
-        "PRO-PLUS-PH42-020-S300-R",
-        "PRO-PLUS-PH42-020-S300-R"
-      ]
+#     joint:
+#       ids: [1, 2, 3, 4, 5, 6]
+#       model_names: [
+#         "PRO-PLUS-PH54-200-S500-R",
+#         "PRO-PLUS-PH54-200-S500-R",
+#         "PRO-PLUS-PH54-100-S500-R",
+#         "PRO-PLUS-PH54-100-S500-R",
+#         "PRO-PLUS-PH42-020-S300-R",
+#         "PRO-PLUS-PH42-020-S300-R"
+#       ]

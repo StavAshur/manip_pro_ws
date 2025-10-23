@@ -415,7 +415,7 @@ int Protocol2PacketHandler::rxPacket(PortHandler *port, uint8_t *rxpacket)
 
   if (result == COMM_SUCCESS)
     removeStuffing(rxpacket);
-
+  std::cerr << "result of rxPacket is: " << result << std::endl; 
   return result;
 }
 
@@ -455,12 +455,16 @@ int Protocol2PacketHandler::txRxPacket(PortHandler *port, uint8_t *txpacket, uin
   // rx packet
   do {
     result = rxPacket(port, rxpacket);
+    std::cerr << "txpacket[PKT_ID]: " << (int)(txpacket[PKT_ID] & 0xff) << std::endl;
+    std::cerr << "rxpacket[PKT_ID]: " << (int)(rxpacket[PKT_ID] & 0xff) << std::endl;
   } while (result == COMM_SUCCESS && txpacket[PKT_ID] != rxpacket[PKT_ID]);
 
   if (result == COMM_SUCCESS && txpacket[PKT_ID] == rxpacket[PKT_ID])
   {
-    if (error != 0)
+    if (error != 0){
+      std::cerr << " error is sort of defined here in txRxPacket" << std::endl;
       *error = (uint8_t)rxpacket[PKT_ERROR];
+    }
   }
 
   return result;
@@ -489,6 +493,9 @@ int Protocol2PacketHandler::ping(PortHandler *port, uint8_t id, uint16_t *model_
   result = txRxPacket(port, txpacket, rxpacket, error);
   if (result == COMM_SUCCESS && model_number != 0)
     *model_number = DXL_MAKEWORD(rxpacket[PKT_PARAMETER0+1], rxpacket[PKT_PARAMETER0+2]);
+
+
+  std::cerr << "++++++++++++++++++++" << std::endl << result << std::endl << "++++++++++++++++++++" << std::endl;
 
   return result;
 }
@@ -862,6 +869,10 @@ int Protocol2PacketHandler::writeTxRx(PortHandler *port, uint8_t id, uint16_t ad
   //memcpy(&txpacket[PKT_PARAMETER0+2], data, length);
 
   result = txRxPacket(port, txpacket, rxpacket, error);
+
+
+  std::cerr << "Error code in writeTxRx is: " << (int)((*error) & 0xff) << std::endl;
+
 
   free(txpacket);
   //delete[] txpacket;
