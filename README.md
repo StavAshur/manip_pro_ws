@@ -32,6 +32,10 @@ ros2 launch open_manipulator_p_controller open_manipulator_p_controller.launch.p
 Terminal 3 – IK Command example:
 ros2 service call /goal_task_space_path open_manipulator_msgs/srv/SetKinematicsPose "{planning_group: 'arm', end_effector_name: 'gripper', path_time: 2.0, kinematics_pose: {pose: {position: {x: 0.0, y: 0.0, z: 0.5}, orientation: {x: 0.4, y: 0.3, z: 0.3, w: 0.1}}}}"
 
+The Visual IK command can be given like so:
+ros2 service call /goal_task_space_visual_target open_manipulator_msgs/srv/SetKinematicsPose "$(cat visual_ik_request.yaml)"
+The .yaml file contains the vector of points that need to be captured as well as the desired orientation if one exists.
+
 Remember to source each terminal before running commands:
 source install/setup.bash
 
