@@ -1,0 +1,15 @@
+<launch>
+  <arg name="config_file" default="$(find env_markers_pkg)/config/sphere_params.yaml"/>
+
+  <node pkg="env_markers_pkg"
+        type="sphere_marker_node"
+        name="sphere_marker_node"
+        output="screen">
+    <param name="config_file" value="$(arg config_file)" />
+  </node>
+
+  <node pkg="rviz"
+        type="rviz"
+        name="rviz"
+        args="-d $(find env_markers_pkg)/rviz/sphere_marker_view.rviz" />
+</launch>

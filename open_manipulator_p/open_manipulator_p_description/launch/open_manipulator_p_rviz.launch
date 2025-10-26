@@ -1,0 +1,40 @@
+<launch>
+  <arg name="use_gui"        default="false" />
+  <arg name="with_gripper"   default="false" />
+  <arg name="with_flashlight"   default="false" />
+
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <include file="$(find open_manipulator_p_description)/launch/open_manipulator_p_upload.launch">
+    <arg name="with_gripper" value="$(arg with_gripper)"/>
+    <arg name="with_flashlight" value="$(arg with_flashlight)"/>
+  </include>
+
+  <!-- Send joint values --> 
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="/use_gui" value="$(arg use_gui)"/>
+    <rosparam param="source_list" subst_value="true">["joint_states"]</rosparam>
+  </node>
+
+  <!-- Combine joint values to TF-->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <!-- Sphere Marker Node -->
+  <node name="sphere_marker_node" pkg="env_markers_pkg" type="sphere_marker_node" output="screen">
+    <!-- Optional: specify your YAML file if you use one -->
+    <param name="config_file" value="$(find env_markers_pkg)/config/sphere_params.yaml" />
+  </node>
+
+  <!-- Show in Rviz -->
+  <group unless="$(arg with_gripper)">
+    <group unless="$(arg with_flashlight)">
+      <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_p_description)/rviz/open_manipulator_p.rviz"/>
+    </group>
+    <group if="$(arg with_flashlight)">
+      <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_p_description)/rviz/open_manipulator_p_with_flashlight.rviz"/>
+    </group>
+  </group>
+
+  <group if="$(arg with_gripper)">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_p_description)/rviz/open_manipulator_p_with_gripper.rviz"/>
+  </group>
+</launch>
