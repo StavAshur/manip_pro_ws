@@ -1,3 +1,0 @@
-open_manipulator_p_teleop_joystick:
-  ros__parameters:
-    with_gripper: true
