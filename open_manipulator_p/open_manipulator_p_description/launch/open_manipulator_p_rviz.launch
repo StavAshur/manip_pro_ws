@@ -20,9 +20,12 @@
 
   <!-- Sphere Marker Node -->
   <node name="sphere_marker_node" pkg="env_markers_pkg" type="sphere_marker_node" output="screen">
-    <!-- Optional: specify your YAML file if you use one -->
-    <param name="config_file" value="$(find env_markers_pkg)/config/sphere_params.yaml" />
   </node>
+
+  <!-- Sphere Marker Node (never actually worked)-->
+  <!-- <node name="segment_marker_node" pkg="env_markers_pkg" type="segment_marker_node" output="screen">
+  </node> -->
+
 
   <!-- Show in Rviz -->
   <group unless="$(arg with_gripper)">

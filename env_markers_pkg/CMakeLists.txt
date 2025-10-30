@@ -22,6 +22,9 @@ target_link_libraries(sphere_marker_node
   yaml-cpp
 )
 
+add_executable(segment_marker_node src/segment_marker_node.cpp)
+target_link_libraries(segment_marker_node ${catkin_LIBRARIES})
+
 install(TARGETS sphere_marker_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

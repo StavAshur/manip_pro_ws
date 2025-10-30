@@ -1021,19 +1021,11 @@ bool SolverCustomizedforOMChain::chainCustomInverseKinematics(Manipulator *manip
 void SolverUsingCRAndGeometry::setOption(std::string var_name, const void *arg)
 {
 
-    std::cerr << "------------------------------------" << std::endl;
-    std::cerr << "--------here at setoption---------" << std::endl;
-    std::cerr << "------------------------------------" << std::endl;
-    std::cerr << "------------ " << var_name << " -------------" << std::endl;
-    std::cerr << "------------------------------------" << std::endl;
   if (var_name == "with_gripper") {
     with_gripper_ = *(bool *)(arg);
   }
   else if (var_name == "with_flashlight") {
     with_flashlight_ = *(bool *)(arg);
-    std::cerr << "------------ " << var_name << " -------------" << std::endl;
-        std::cerr << "----IS NOW ----- " << with_flashlight_ << " -------------" << std::endl;
-
   }
 }
 
@@ -1116,13 +1108,11 @@ bool SolverUsingCRAndGeometry::visualInverseSolverUsingGeometry(
 
   if (with_flashlight_){
 
-    std::cerr << "------------------------------------" << std::endl;
-    std::cerr << "--------I HAVE A FLASHLIGHT---------" << std::endl;
-    std::cerr << "------------------------------------" << std::endl;
+    std::cout << "------------------------------------" << std::endl;
+    std::cout << "--------I HAVE A FLASHLIGHT---------" << std::endl;
+    std::cout << "------------------------------------" << std::endl;
 
   }
-
-//   pose {(x,y,z), v}
 
 // Temporary until I set the flashlight up
 //   get beam range h
@@ -1131,6 +1121,12 @@ bool SolverUsingCRAndGeometry::visualInverseSolverUsingGeometry(
   double theta = PI/3;
   int max_iters = 20;
 
+Eigen::Matrix3d normalized_columns_goal_orientation;
+if (!goal_orientation.isZero())  {
+  normalized_columns_goal_orientation.col(0) = goal_orientation.col(0).normalized();
+  normalized_columns_goal_orientation.col(1) = goal_orientation.col(1).normalized();
+  normalized_columns_goal_orientation.col(2) = goal_orientation.col(2).normalized();
+}
 
 //Compute MES(P) b=(c,r)
    Eigen::Vector3d c = Eigen::Vector3d::Zero();
@@ -1146,9 +1142,9 @@ bool SolverUsingCRAndGeometry::visualInverseSolverUsingGeometry(
 
   
   Eigen::Vector3d v;
-  // The vector descriing``forward'' for the robot (unit vector)
+  // The vector describing``forward'' for the robot (unit vector)
   if (!goal_orientation.isZero()) 
-    v = goal_orientation.col(0).normalized();
+    v = normalized_columns_goal_orientation.col(0);
   else
     throw std::runtime_error("Finding an orientation is not implemented yet");
   
@@ -1165,11 +1161,11 @@ bool SolverUsingCRAndGeometry::visualInverseSolverUsingGeometry(
   // Exponential search over s to find closest valid point to c 
   double seg_length = (b - a).norm();
 
-  std::cerr << "[DEBUG] c: " << c.transpose() << std::endl;
-  std::cerr << "[DEBUG] v: " << v.transpose() << std::endl;
-  std::cerr << "[DEBUG] h: " << h << ", r: " << r << ", theta: " << theta << std::endl;
-  std::cerr << "[DEBUG] Segment a: " << a.transpose() << std::endl;
-  std::cerr << "[DEBUG] Segment b: " << b.transpose() << std::endl;
+  std::cout << "[DEBUG] c: " << c.transpose() << std::endl;
+  std::cout << "[DEBUG] v: " << v.transpose() << std::endl;
+  std::cout << "[DEBUG] h: " << h << ", r: " << r << ", theta: " << theta << std::endl;
+  std::cout << "[DEBUG] Segment a: " << a.transpose() << std::endl;
+  std::cout << "[DEBUG] Segment b: " << b.transpose() << std::endl;
 
   for (int direction = -1; direction < 2; direction += 2){
 
@@ -1183,23 +1179,27 @@ bool SolverUsingCRAndGeometry::visualInverseSolverUsingGeometry(
       coef *= 2.0;
       Pose target_pose;
       target_pose.kinematic.position = curr;
-      target_pose.kinematic.orientation = goal_orientation;
+      target_pose.kinematic.orientation = normalized_columns_goal_orientation;
 
 
-      std::cerr << "[DEBUG] --------------------------------------------" << std::endl;
-      std::cerr << "[DEBUG] Iteration: " << (max_iters - iter + 1) << std::endl;
-      std::cerr << "[DEBUG] Current coef: " << coef << std::endl;
-      std::cerr << "[DEBUG] Step size: " << step << std::endl;
-      std::cerr << "[DEBUG] Current apex position (curr): " << curr.transpose() << std::endl;
+      std::cout << "[DEBUG] --------------------------------------------" << std::endl;
+      std::cout << "[DEBUG] Iteration: " << (max_iters - iter + 1) << std::endl;
+      std::cout << "[DEBUG] Current coef: " << coef << std::endl;
+      std::cout << "[DEBUG] Step size: " << step << std::endl;
+      std::cout << "[DEBUG] Current apex position (curr): " << curr.transpose() << std::endl;
+      std::cout << "[DEBUG] Current apex orientation (curr): " << std::endl
+                << normalized_columns_goal_orientation.row(0) << std::endl
+                << normalized_columns_goal_orientation.row(1) << std::endl
+                << normalized_columns_goal_orientation.row(2) << std::endl;
 
 
       goal_joint_value->clear();
       if (inverseSolverUsingGeometry(manipulator, tool_name, target_pose, goal_joint_value)) {
-          std::cerr << "[DEBUG] goal joint value after standard IK";
+          std::cout << "[DEBUG] goal joint value after standard IK";
           for (int i=0; i<6; i++) {
-            std::cerr << goal_joint_value->at(i).position << " ";
+            std::cout << goal_joint_value->at(i).position << " ";
           }
-          std::cerr << std::endl;
+          std::cout << std::endl;
           return true;
       }
     }
@@ -1224,6 +1224,7 @@ bool SolverUsingCRAndGeometry::inverseSolverUsingGeometry(Manipulator *manipulat
   Eigen::MatrixXd orientation = Eigen::MatrixXd::Zero(3,3);
   position = target_pose.kinematic.position;
   orientation = target_pose.kinematic.orientation;
+
   double d6 = 0.123;
 
   if (with_gripper_)
@@ -1237,7 +1238,6 @@ bool SolverUsingCRAndGeometry::inverseSolverUsingGeometry(Manipulator *manipulat
     d6 += 0.1;
   }
 
-  d6 += 0.1;
 
   Eigen::Vector3d position_2 = Eigen::VectorXd::Zero(3);
   position_2 << orientation(0,0), orientation(1,0), orientation(2,0);

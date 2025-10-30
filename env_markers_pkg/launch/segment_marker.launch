@@ -1,0 +1,7 @@
+<launch>
+  <!-- Load YAML parameters -->
+  <rosparam file="$(find env_markers_pkg)/config/segment_params.yaml" command="load"/>
+
+  <!-- Start the node -->
+  <node pkg="env_markers_pkg" type="segment_marker_node" name="segment_marker_node" output="screen"/>
+</launch>

@@ -27,7 +27,6 @@ OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::
   with_gripper_(false),
   with_flashlight_(false)
 {
-  std::cerr << "with gripper -> " << with_gripper_ << std::endl;
 
   /************************************************************
   ** Initialize ROS parameters
@@ -41,7 +40,6 @@ OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::
   ** Initialize variables
   ************************************************************/
   std::cerr << "with flashlight -> " << with_flashlight_ << std::endl;
-  std::cerr << "with gripper -> " << with_gripper_ << std::endl;
 
   open_manipulator_.initOpenManipulator(using_platform_, usb_port, baud_rate, control_period_, with_gripper_, with_flashlight_);
 
@@ -380,6 +378,13 @@ bool OpenManipulatorController::visualGoalTaskSpacePathWithOrientationCallback(o
                        req.kinematics_pose.pose.orientation.x,
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
+
+
+  std::cerr << "x is: " <<  req.kinematics_pose.pose.orientation.x << std::endl
+            << "y is: " <<  req.kinematics_pose.pose.orientation.y << std::endl
+            << "z is: " <<  req.kinematics_pose.pose.orientation.z << std::endl
+            << "w is: " <<  req.kinematics_pose.pose.orientation.w << std::endl;
+  
 
   Eigen::Matrix3d orientation = math::convertQuaternionToRotationMatrix(q);
 

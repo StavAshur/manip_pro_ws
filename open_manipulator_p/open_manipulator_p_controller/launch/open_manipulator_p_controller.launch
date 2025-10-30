@@ -4,7 +4,7 @@
   <arg name="control_period"         default="0.010"/>
   <arg name="use_platform"           default="true"/>
   <arg name="with_gripper"           default="false"/>
-  <arg name="with_flashlight"        default="false"/>
+  <arg name="with_flashlight"        default="true"/>
 
   <node name="open_manipulator_p_controller" pkg="open_manipulator_p_controller" type="open_manipulator_p_controller"
      output="screen" args="$(arg usb_port) $(arg baud_rate)">
